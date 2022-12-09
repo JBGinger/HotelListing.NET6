@@ -11,7 +11,6 @@ namespace HotelListing.API.Controllers
     [ApiController]
     public class HotelsController : ControllerBase
     {
-        //private readonly HotelListingDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHotelsRepository _hotelsRepository;
 
@@ -23,11 +22,10 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Hotels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetHotelDto>>> GetHotels()
+        public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
             var hotels = await _hotelsRepository.GetAllAsync();
-            var records = _mapper.Map<List<GetHotelDto>>(hotels);
-            return Ok(records);
+            return Ok(_mapper.Map<List<HotelDto>>(hotels));
         }
 
         // GET: api/Hotels/5
@@ -41,23 +39,26 @@ namespace HotelListing.API.Controllers
                 return NotFound();
             }
 
-            var hotelDto = _mapper.Map<HotelDto>(hotel);
-
-            return Ok(hotelDto);
+            return Ok(_mapper.Map<HotelDto>(hotel));
         }
 
         // PUT: api/Hotels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHotel(int id, UpdateHotelDto updateHotelDto)
+        public async Task<IActionResult> PutHotel(int id, HotelDto hotelDto)
         {
-            if (id != updateHotelDto.Id)
+            if (id != hotelDto.Id)
             {
                 return BadRequest("Invalid record Id");
             }
 
-            //_context.Entry(hotel).State = EntityState.Modified;
             var hotel = await _hotelsRepository.GetAsync(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(hotelDto, hotel);
 
             try
             {

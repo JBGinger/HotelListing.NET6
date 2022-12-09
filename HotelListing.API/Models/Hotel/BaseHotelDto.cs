@@ -1,7 +1,16 @@
-﻿namespace HotelListing.API.Models.Hotel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HotelListing.API.Models.Hotel
 {
-    public class BaseHotelDto
+    public abstract class BaseHotelDto
     {
-        public int Id { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Address { get; set; }
+        public double? Rating { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int CountryId { get; set; }
     }
 }
